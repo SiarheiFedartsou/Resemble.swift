@@ -10,19 +10,19 @@ import Foundation
 
 
 protocol Color {
-    var r: UInt8 { get }
-    var g: UInt8 { get }
-    var b: UInt8 { get }
-    var a: UInt8 { get }
+    var r: Float { get }
+    var g: Float { get }
+    var b: Float { get }
+    var a: Float { get }
 }
 
 extension Color {
-    func distance(from: Color) -> UInt8
+    func distance(from: Color) -> Float
     {
-        let rDiff = abs(Int(r) - Int(from.r))
-        let gDiff = abs(Int(g) - Int(from.g))
-        let bDiff = abs(Int(b) - Int(from.b))
-        let result = UInt8((rDiff + gDiff + bDiff) / 3)
+        let rDiff = abs(r - from.r)
+        let gDiff = abs(g - from.g)
+        let bDiff = abs(b - from.b)
+        let result = (rDiff + gDiff + bDiff) / 3.0
         return result
     }
 }

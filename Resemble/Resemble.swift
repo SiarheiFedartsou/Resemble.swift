@@ -8,10 +8,15 @@
 
 import Foundation
 import CoreGraphics
+import Accelerate
 
 struct ImageSize {
     let width: Int
     let height: Int
+    
+    var square: Int {
+        return width * height
+    }
 }
 
 extension ImageSize : Equatable {}
@@ -22,8 +27,29 @@ func ==(lhs: ImageSize, rhs: ImageSize) -> Bool {
 }
 
 struct Image {
-    let data: UnsafeMutablePointer<UInt8>
-    let size: ImageSize
+    let buffer: vImage_Buffer
+    
+    
+    init(buffer: vImage_Buffer)
+    {
+        self.buffer = buffer
+    }
+    
+    init(data: UnsafeMutablePointer<Float>, size: ImageSize)
+    {
+        self.buffer = vImage_Buffer(data: data, height: vImagePixelCount(size.height), width: vImagePixelCount(size.width), rowBytes: 4 * MemoryLayout<Float>.size * size.width)
+    }
+    
+    var data: UnsafeMutablePointer<Float> {
+        return buffer.data.bindMemory(to: Float.self, capacity: buffer.rowBytes * Int(buffer.height))
+    }
+    var size: ImageSize {
+        return ImageSize(width: Int(buffer.width), height: Int(buffer.height))
+    }
+    
+//    deinit {
+//        // TODO: deallocate `buffer`
+//    }
 }
 
 
@@ -41,76 +67,40 @@ func ==(lhs: Image, rhs: Image) -> Bool {
     return true
 }
 
-
-enum ErrorPixelTransform {
-    case flat
-    case movement
-    case flatDifferenceIntensity
-    case movementDifferenceIntensity
-    
-    func transform(errorColor: Color, pixel1: Pixel, pixel2: Pixel) -> Pixel
-    {
-    
-        
-        switch self {
-        case .flat:
-            return Pixel(color: errorColor)
-        case .movement:
-            return Pixel(
-                r: UInt8((Float(pixel2.r) * (Float(errorColor.r) / 255.0) + Float(errorColor.r)) / 2.0),
-                g: UInt8((Float(pixel2.g) * (Float(errorColor.g) / 255.0) + Float(errorColor.g)) / 2.0),
-                b: UInt8((Float(pixel2.b) * (Float(errorColor.b) / 255.0) + Float(errorColor.b)) / 2.0),
-                a: pixel2.a
-            )
-        case .flatDifferenceIntensity:
-            return Pixel(
-                r: errorColor.r,
-                g: errorColor.g,
-                b: errorColor.b,
-                a: pixel2.distance(from: pixel1)
-            )
-        case .movementDifferenceIntensity:
-            let ratio = Float(pixel2.distance(from: pixel1)) / 255.0 * 0.8
-
-            let errorColorR = Float(errorColor.r)
-            let errorColorG = Float(errorColor.g)
-            let errorColorB = Float(errorColor.b)
-            
-            let r = UInt8((1.0 - ratio) * (Float(pixel2.r) * (errorColorR / 255.0)) + ratio * errorColorR)
-            let g = UInt8((1.0 - ratio) * (Float(pixel2.g) * (errorColorG / 255.0)) + ratio * errorColorG)
-            let b = UInt8((1.0 - ratio) * (Float(pixel2.b) * (errorColorB / 255.0)) + ratio * errorColorB)
-            
-            return Pixel(
-                r: r,
-                g: g,
-                b: b,
-                a: pixel2.a
-            )
-        }
-    }
+enum ResizingPolicy {
+    case toSmaller
+    case toLarger
 }
 
+
 extension Image {
-    func compare(to image: Image, errorPixelTransform: ErrorPixelTransform = .flat) -> Image {
+    func compare(to image: Image, errorPixelTransform: ErrorPixelTransform = .flat, resizingPolicy: ResizingPolicy = .toSmaller) -> Image {
         
-        let outputData = UnsafeMutablePointer<UInt8>.allocate(capacity: image.size.width * image.size.height * 4)
+    
+        return generateDiff(between: image, and: self, errorPixelTransform: errorPixelTransform)
+    }
+    
+    private func generateDiff(between image1: Image, and image2: Image, errorPixelTransform: ErrorPixelTransform) -> Image
+    {
+        let outputData = UnsafeMutablePointer<Float>.allocate(capacity: image1.size.width * image1.size.height * 4)
         
         var samePixelsCount = 0
-        for pixelIndex in 0 ..< self.size.width * self.size.height {
-            let pixel1 = Pixel(pixelData: image.data.advanced(by: pixelIndex * 4))
-            let pixel2 = Pixel(pixelData: self.data.advanced(by: pixelIndex * 4))
+        for pixelIndex in 0 ..< image1.size.width * image1.size.height {
+            let pixel1 = Pixel(pixelData: image1.data.advanced(by: pixelIndex * 4))
+            let pixel2 = Pixel(pixelData: image2.data.advanced(by: pixelIndex * 4))
             
             if pixel1 == pixel2 {
                 pixel1.write(to: outputData.advanced(by: 4 * pixelIndex))
                 samePixelsCount += 1
             } else {
-                let errorPixel = errorPixelTransform.transform(errorColor: Pixel(r: 255, g: 0, b: 255, a: 255), pixel1: pixel1, pixel2: pixel2)
+                let errorPixel = errorPixelTransform.transform(errorColor: Pixel(r: 1.0, g: 0, b: 1.0, a: 1.0), pixel1: pixel1, pixel2: pixel2)
                 errorPixel.write(to: outputData.advanced(by: 4 * pixelIndex))
             }
         }
         
-    
-        return Image(data: outputData, size: image.size)
+        //print(Float(samePixelsCount) /  Float(image1.size.width * image1.size.height))
         
+        
+        return Image(data: outputData, size: image1.size)
     }
 }

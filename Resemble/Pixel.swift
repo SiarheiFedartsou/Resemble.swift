@@ -9,10 +9,10 @@
 import Foundation
 
 struct Pixel {
-    let r: UInt8
-    let g: UInt8
-    let b: UInt8
-    let a: UInt8
+    let r: Float
+    let g: Float
+    let b: Float
+    let a: Float
 }
 
 extension Pixel : Color {
@@ -25,18 +25,18 @@ extension Pixel : Color {
 }
 
 extension Pixel {
-    init(pixelData: UnsafeMutablePointer<UInt8>) {
-        r = pixelData[0]
-        g = pixelData[1]
-        b = pixelData[2]
-        a = pixelData[3]
+    init(pixelData: UnsafeMutablePointer<Float>) {
+        a = pixelData[0]
+        r = pixelData[1]
+        g = pixelData[2]
+        b = pixelData[3]
     }
     
-    func write(to output: UnsafeMutablePointer<UInt8>) {
-        output[0] = r
-        output[1] = g
-        output[2] = b
-        output[3] = a
+    func write(to output: UnsafeMutablePointer<Float>) {
+        output[0] = a
+        output[1] = r
+        output[2] = g
+        output[3] = b
     }
 }
 
@@ -44,5 +44,9 @@ extension Pixel {
 extension Pixel : Equatable {}
 
 func ==(lhs: Pixel, rhs: Pixel) -> Bool {
-    return lhs.r == rhs.r && lhs.g == rhs.g && lhs.b == rhs.b && lhs.a == rhs.a
+    return
+        lhs.r.isEqual(to: rhs.r) &&
+        lhs.g.isEqual(to: rhs.g) &&
+        lhs.b.isEqual(to: rhs.b) &&
+        lhs.a.isEqual(to: rhs.a)
 }

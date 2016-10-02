@@ -17,10 +17,23 @@ class TransformTests: XCTestCase {
         let image2 = Image(image: image(named: "test2.png").cgImage!)
         
         let expectedImage = Image(image: image(named: "flat.png").cgImage!)
+
         
         
-        XCTAssertEqual(image1.compare(to: image2, errorPixelTransform: .flat), expectedImage)
+        
+        XCTAssertEqual(image1.compare(to: image2, errorPixelTransform: .flat).preparedForTest(), expectedImage)
     }
+    
+    func testFlatDifferenceIntensityTransform() {
+        let image1 = Image(image: image(named: "test1.png").cgImage!)
+        let image2 = Image(image: image(named: "test2.png").cgImage!)
+        
+        let expectedImage = Image(image: image(named: "flatDifferenceIntensity.png").cgImage!)
+    
+        
+        XCTAssertEqual(image1.compare(to: image2, errorPixelTransform: .flatDifferenceIntensity).preparedForTest(), expectedImage)
+    }
+    
     
     func testMovementTransform() {
         let image1 = Image(image: image(named: "test1.png").cgImage!)
@@ -29,8 +42,10 @@ class TransformTests: XCTestCase {
         let expectedImage = Image(image: image(named: "movement.png").cgImage!)
         
         
-        XCTAssertEqual(image1.compare(to: image2, errorPixelTransform: .movement), expectedImage)
+        XCTAssertEqual(image1.compare(to: image2, errorPixelTransform: .movement).preparedForTest(), expectedImage)
     }
+    
+
     
     func testMovementDifferenceIntensityTransform() {
         let image1 = Image(image: image(named: "test1.png").cgImage!)
@@ -39,7 +54,7 @@ class TransformTests: XCTestCase {
         let expectedImage = Image(image: image(named: "movementDifferenceIntensity.png").cgImage!)
         
         
-        XCTAssertEqual(image1.compare(to: image2, errorPixelTransform: .movementDifferenceIntensity), expectedImage)
+        XCTAssertEqual(image1.compare(to: image2, errorPixelTransform: .movementDifferenceIntensity).preparedForTest(), expectedImage)
     }
     
 }
