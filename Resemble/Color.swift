@@ -9,11 +9,11 @@
 import Foundation
 
 
-protocol Color {
-    var r: Float { get }
-    var g: Float { get }
-    var b: Float { get }
-    var a: Float { get }
+struct Color {
+    let r: Float
+    let g: Float
+    let b: Float
+    let a: Float
 }
 
 extension Color {

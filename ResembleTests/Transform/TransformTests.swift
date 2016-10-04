@@ -7,7 +7,7 @@
 //
 
 import XCTest
-@testable import Resemble
+@testable import ResembleMac
 
 
 class TransformTests: XCTestCase {

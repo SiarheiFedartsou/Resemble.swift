@@ -7,13 +7,14 @@
 //
 
 import Foundation
-@testable import Resemble
+@testable import ResembleMac
 
 extension Image {
     func preparedForTest() -> Image
     {
-        let data = UIImagePNGRepresentation(UIImage(cgImage: self.CGImageRepresentation()))!
-        let uiimage = UIImage(data: data)!
-        return Image(image: uiimage.cgImage!)
+        return self
+//        let data = UIImagePNGRepresentation(UIImage(cgImage: self.CGImageRepresentation()))!
+//        let uiimage = UIImage(data: data)!
+//        return Image(image: uiimage.cgImage!)
     }
 }

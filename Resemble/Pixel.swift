@@ -15,15 +15,6 @@ struct Pixel {
     let a: Float
 }
 
-extension Pixel : Color {
-    init(color: Color) {
-        r = color.r
-        g = color.g
-        b = color.b
-        a = color.a
-    }
-}
-
 extension Pixel {
     init(pixelData: UnsafeMutablePointer<Float>) {
         a = pixelData[0]

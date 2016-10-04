@@ -8,46 +8,59 @@
 
 import Foundation
 
-enum ErrorPixelTransform {
+public enum ErrorPixelTransform {
     case flat
     case movement
     case flatDifferenceIntensity
     case movementDifferenceIntensity
+//    
+//    func transform(errorColor: Color, pixel1: Pixel, pixel2: Pixel) -> Pixel
+//    {
+//        
+//        
+////        switch self {
+////        case .flat:
+//        return Pixel(r: errorColor.a, g: errorColor.b, b: errorColor.b, a: errorColor.a)
+////        case .movement:
+//            return Pixel(
+//                r: ((pixel2.r * errorColor.r + errorColor.r) / 2.0),
+//                g: ((pixel2.g * errorColor.g + errorColor.g) / 2.0),
+//                b:  ((pixel2.b * errorColor.b + errorColor.b) / 2.0),
+//                a: pixel2.a
+//            )
+////        case .flatDifferenceIntensity:
+////            return Pixel(
+////                r: errorColor.r,
+////                g: errorColor.g,
+////                b: errorColor.b,
+////                a: pixel2.distance(from: pixel1)
+////            )
+////        case .movementDifferenceIntensity:
+////            let ratio = pixel2.distance(from: pixel1) * 0.8
+//// 
+////            let r = (1.0 - ratio) * pixel2.r * errorColor.r + ratio * errorColor.r
+////            let g = (1.0 - ratio) * pixel2.g * errorColor.g + ratio * errorColor.g
+////            let b = (1.0 - ratio) * pixel2.b * errorColor.b + ratio * errorColor.b
+////            
+////            return Pixel(
+////                r: r,
+////                g: g,
+////                b: b,
+////                a: pixel2.a
+////            )
+////        }
+//    }
     
-    func transform(errorColor: Color, pixel1: Pixel, pixel2: Pixel) -> Pixel
-    {
-        
-        
+    var strategy: ErrorPixelTransformStrategy {
         switch self {
         case .flat:
-            return Pixel(color: errorColor)
+            return FlatErrorPixelTransformStrategy()
         case .movement:
-            return Pixel(
-                r: ((pixel2.r * errorColor.r + errorColor.r) / 2.0),
-                g: ((pixel2.g * errorColor.g + errorColor.g) / 2.0),
-                b:  ((pixel2.b * errorColor.b + errorColor.b) / 2.0),
-                a: pixel2.a
-            )
+            return MovementErrorPixelTransformStrategy()
         case .flatDifferenceIntensity:
-            return Pixel(
-                r: errorColor.r,
-                g: errorColor.g,
-                b: errorColor.b,
-                a: pixel2.distance(from: pixel1)
-            )
+            return FlatErrorPixelTransformStrategy()
         case .movementDifferenceIntensity:
-            let ratio = pixel2.distance(from: pixel1) * 0.8
- 
-            let r = (1.0 - ratio) * pixel2.r * errorColor.r + ratio * errorColor.r
-            let g = (1.0 - ratio) * pixel2.g * errorColor.g + ratio * errorColor.g
-            let b = (1.0 - ratio) * pixel2.b * errorColor.b + ratio * errorColor.b
-            
-            return Pixel(
-                r: r,
-                g: g,
-                b: b,
-                a: pixel2.a
-            )
+            return MovementDifferenceIntensityErrorPixelTransformStrategy()
         }
     }
 }

@@ -7,9 +7,8 @@
 //
 
 import XCTest
-@testable import Resemble
+@testable import ResembleMac
 import ImageIO
-import MobileCoreServices
 
 import Metal
 

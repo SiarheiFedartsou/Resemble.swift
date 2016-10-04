@@ -25,7 +25,7 @@ private func defaultImageFormat() -> vImage_CGImageFormat
                                 renderingIntent: .defaultIntent)
 }
 
-extension Image {
+public extension Image {
     
     init(image: CGImage)
     {
