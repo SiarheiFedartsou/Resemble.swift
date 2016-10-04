@@ -10,11 +10,6 @@
 
 using namespace metal;
 
-struct AdjustSaturationUniforms
-{
-    float saturationFactor;
-};
-
 float colorDistance(float4 color1, float4 color2)
 {
     return (abs(color1.r - color2.r) + abs(color1.g - color2.g) + abs(color1.b - color2.b)) / 3.0;
@@ -26,6 +21,7 @@ kernel void flatTransform(texture2d<float, access::read> inTexture1 [[texture(0)
                                         constant float4 &errorColor [[buffer(0)]],
                                         uint2 gid [[thread_position_in_grid]])
 {
+   // float4 errorColor = float4(1.0, 0.0, 0.0, 1.0);
     float4 inColor1 = inTexture1.read(gid);
     float4 inColor2 = inTexture2.read(gid);
     
@@ -48,7 +44,7 @@ kernel void movementTransform(texture2d<float, access::read> inTexture1 [[textur
     if (all(inColor1 == inColor2)) {
         outTexture.write(inColor1, gid);
     } else {
-        outTexture.write((inColor2 * errorColor + errorColor) / 2.0, gid);
+        outTexture.write((inColor1 * errorColor + errorColor) / 2.0, gid);
     }
 }
 

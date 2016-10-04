@@ -19,8 +19,6 @@ public enum ResizingPolicy {
 
 public extension Image {
     func compare(to image: Image, errorPixelTransform: ErrorPixelTransform = .flat, resizingPolicy: ResizingPolicy = .toSmaller) -> Image {
-        
-    
         return self.difference(with: image, errorPixelTransform: errorPixelTransform)        
     }
 }

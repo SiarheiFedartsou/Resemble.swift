@@ -17,13 +17,16 @@ extension NSImage {
         return self.cgImage(forProposedRect: &nsRect, context: context, hints: nil)
     }
     
-    func save(atPath path: String)
-    {
-        guard let cgImage = self.cgImage else { return }
+    var pngData: Data? {
+        guard let cgImage = self.cgImage else { return nil }
         let bitmapRep = NSBitmapImageRep(cgImage: cgImage)
         bitmapRep.size = self.size
-        let data = bitmapRep.representation(using: .PNG, properties: [:])
-        try? data?.write(to: URL(fileURLWithPath: path))
+        return bitmapRep.representation(using: .PNG, properties: [:])
+    }
+    
+    func save(atPath path: String)
+    {
+        try? pngData?.write(to: URL(fileURLWithPath: path))
     }
 }
 

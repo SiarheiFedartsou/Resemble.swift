@@ -15,14 +15,3 @@ struct Color {
     let b: Float
     let a: Float
 }
-
-extension Color {
-    func distance(from: Color) -> Float
-    {
-        let rDiff = abs(r - from.r)
-        let gDiff = abs(g - from.g)
-        let bDiff = abs(b - from.b)
-        let result = (rDiff + gDiff + bDiff) / 3.0
-        return result
-    }
-}

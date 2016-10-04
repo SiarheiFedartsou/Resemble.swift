@@ -12,12 +12,10 @@ import Accelerate
 private func defaultImageFormat() -> vImage_CGImageFormat
 {
     let bitmapInfo = CGBitmapInfo(rawValue:
-        CGImageAlphaInfo.premultipliedFirst.rawValue |
-            CGBitmapInfo.floatComponents.rawValue |
-            CGBitmapInfo.byteOrder32Little.rawValue)
+        CGImageAlphaInfo.last.rawValue)
     
-    return vImage_CGImageFormat(bitsPerComponent: UInt32(MemoryLayout<Float>.size * 8),
-                                bitsPerPixel: UInt32(MemoryLayout<Float>.size * 8 * 4),
+    return vImage_CGImageFormat(bitsPerComponent: UInt32(MemoryLayout<UInt8>.size * 8),
+                                bitsPerPixel: UInt32(MemoryLayout<UInt8>.size * 4 * 8),
                                 colorSpace: nil,
                                 bitmapInfo: bitmapInfo,
                                 version: 0,
@@ -46,7 +44,7 @@ public extension Image {
         var error: vImage_Error = kvImageNoError
         
         var buffer = self.buffer
-        let image = vImageCreateCGImageFromBuffer(&buffer, &imageFormat, nil, nil, vImage_Flags(kvImageDoNotTile), &error)
+        let image = vImageCreateCGImageFromBuffer(&buffer, &imageFormat, nil, nil, vImage_Flags(kvImageNoFlags), &error)
         print(error)
         return image!.takeUnretainedValue()
     }

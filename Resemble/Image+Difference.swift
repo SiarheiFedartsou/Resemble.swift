@@ -19,7 +19,7 @@ extension Image {
         let strategy = errorPixelTransform.strategy
         
         
-        let outputTexture = strategy.difference(texture1!, texture2!, errorPixelColor: Color(r: 1.0, g: 0.0, b: 1.0, a: 1.0), context: context)
+        let outputTexture = strategy.difference(texture1!, texture2!, errorPixelColor: Color(r: 1.0, g: 0, b: 1.0, a: 1.0), context: context)
         
         return Image(fromTexture: outputTexture)
     }

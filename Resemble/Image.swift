@@ -17,14 +17,9 @@ public struct Image {
     {
         self.buffer = buffer
     }
-    
-    init(data: UnsafeMutablePointer<Float>, size: ImageSize)
-    {
-        self.buffer = vImage_Buffer(data: data, height: vImagePixelCount(size.height), width: vImagePixelCount(size.width), rowBytes: 4 * MemoryLayout<Float>.size * size.width)
-    }
-    
-    var data: UnsafeMutablePointer<Float> {
-        return buffer.data.bindMemory(to: Float.self, capacity: buffer.rowBytes * Int(buffer.height))
+
+    var data: UnsafeMutablePointer<UInt8> {
+        return buffer.data.bindMemory(to: UInt8.self, capacity: buffer.rowBytes * Int(buffer.height))
     }
     var size: ImageSize {
         return ImageSize(width: Int(buffer.width), height: Int(buffer.height))

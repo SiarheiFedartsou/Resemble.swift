@@ -15,7 +15,7 @@ public extension Image {
         let height = self.size.height
         
         let textureDescriptor = MTLTextureDescriptor.texture2DDescriptor(
-            pixelFormat: .rgba32Float,
+            pixelFormat: .rgba8Unorm,
             width: width,
             height: height,
             mipmapped: false)
@@ -32,9 +32,9 @@ public extension Image {
         let width = texture.width
         let height = texture.height
     
-        let data = UnsafeMutablePointer<Float>.allocate(capacity: width * height * 4)
+        let data = UnsafeMutablePointer<UInt8>.allocate(capacity: width * height * 4)
         
-        let bytesPerRow = width * 4 * MemoryLayout<Float>.size
+        let bytesPerRow = width * 4 * MemoryLayout<UInt8>.size
         
         let region = MTLRegionMake2D(0, 0, width, height)
         

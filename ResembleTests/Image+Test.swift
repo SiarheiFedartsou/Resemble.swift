@@ -12,9 +12,9 @@ import Foundation
 extension Image {
     func preparedForTest() -> Image
     {
-        return self
-//        let data = UIImagePNGRepresentation(UIImage(cgImage: self.CGImageRepresentation()))!
-//        let uiimage = UIImage(data: data)!
-//        return Image(image: uiimage.cgImage!)
+        let cgImage = self.CGImageRepresentation()
+        let data = NSImage(cgImage: cgImage, size: NSSize(width: cgImage.width, height: cgImage.height)).pngData
+        let image = NSImage(data: data!)
+        return Image(image: image!.cgImage!)
     }
 }
